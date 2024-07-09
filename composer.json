@@ -1,8 +1,17 @@
 {
-    "name": "laravel/laravel",
-    "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "name": "macropay-solutions/laravel-crud-wizard-decorator-demo",
+    "type": "library",
+    "description": "Demo for laravel-crud-wizard-decorator library for laravel/lumen crud operations including url query language",
+    "keywords": [
+        "crud",
+        "wizard",
+        "decorator",
+        "laravel",
+        "lumen",
+        "demo",
+        "restful-api",
+        "url-query-language"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
