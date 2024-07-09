@@ -43,8 +43,7 @@
     ],
     "suggest": {
         "macropay-solutions/laravel-crud-wizard": ">= 2.3.9",
-        "macropay-solutions/laravel-crud-wizard-decorator": ">= 1.0",
-        "macropay-solutions/laravel-crud-wizard-free": ">= 1.0"
+        "macropay-solutions/laravel-crud-wizard-decorator": ">= 1.0"
     },
     "autoload": {
         "psr-4": {
