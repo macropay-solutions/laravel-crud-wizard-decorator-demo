@@ -6,6 +6,10 @@ use MacropaySolutions\LaravelCrudWizardDecorator\Decorators\AbstractResourceDeco
 
 class ClientDecorator extends AbstractResourceDecorator
 {
+    public array $withoutRelations = [
+        'products',
+    ];
+
     public function getResourceMappings(): array
     {
         return [

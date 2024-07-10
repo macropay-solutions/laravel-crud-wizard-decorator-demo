@@ -6,6 +6,10 @@ use MacropaySolutions\LaravelCrudWizardDecorator\Decorators\AbstractResourceDeco
 
 class OperationDecorator extends AbstractResourceDecorator
 {
+    public array $withoutRelations = [
+        'children',
+    ];
+
     public function getResourceMappings(): array
     {
         return [
