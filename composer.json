@@ -1,11 +1,12 @@
 {
     "name": "macropay-solutions/laravel-crud-wizard-decorator-demo",
     "type": "library",
-    "description": "Demo for laravel-crud-wizard-decorator library for laravel/lumen crud operations including url query language",
+    "description": "Demo data composition/decoration for laravel-crud-wizard-decorator library including url query language",
     "keywords": [
         "crud",
         "wizard",
         "decorator",
+        "composition",
         "laravel",
         "lumen",
         "demo",
