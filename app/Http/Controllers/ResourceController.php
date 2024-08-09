@@ -39,12 +39,12 @@ class ResourceController extends Controller
                 )));
                 /** $request can contain also files so, overwrite this function to handle them */
                 $request->replace($model->getDirty());
+                $baseModel = $this->resourceService->update($identifier, $this->validateUpdateRequest($request));
 
-                return GeneralHelper::app(JsonResponse::class, [
-                    'data' => $this->resourceService->update($identifier, $this->validateUpdateRequest($request))
-                        ->toArray(),
-                    'status' => 200
-                ]);
+                return \response()->json($this->loadRelations(
+                    $request->replace($all),
+                    $baseModel
+                ));
             } catch (ModelNotFoundException $e) {
                 if (!$this->resourceService->isUpdateOrCreateAble($all)) {
                     throw $e;
