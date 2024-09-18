@@ -33,13 +33,19 @@ class ResourceController extends Controller
 
             try {
                 $model = $this->resourceService->get($identifier, appendIndex: false);
-                $model->fill(GeneralHelper::filterDataByKeys($all, \array_diff(
+                $increments = $this->getValidIncrementsFromRequest($model, $all);
+                ($clone = clone $model)->fill(GeneralHelper::filterDataByKeys($all, \array_diff(
                     $this->resourceService->getModelColumns(),
-                    $this->resourceService->getIgnoreExternalUpdateFor()
+                    $this->resourceService->getIgnoreExternalUpdateFor(),
+                    \array_keys($increments)
                 )));
                 /** $request can contain also files so, overwrite this function to handle them */
-                $request->replace($model->getDirty());
-                $baseModel = $this->resourceService->update($identifier, $this->validateUpdateRequest($request));
+                $request->replace($clone->getDirty());
+                $validatedPayload = $this->validateUpdateRequest($request);
+
+                $baseModel = $increments !== [] ?
+                    $this->resourceService->incrementBulk($model, $increments, $validatedPayload) :
+                    $this->resourceService->update($identifier, $validatedPayload);
 
                 return \response()->json($this->loadRelations(
                     $request->replace($all),

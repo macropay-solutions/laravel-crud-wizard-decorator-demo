@@ -22,6 +22,9 @@ class Product extends BaseModel
         'value',
         'currency',
     ];
+    protected array $externalIncrementAble = [
+        'value',
+    ];
     protected $table = 'products';
     protected $fillable = [
         'ean',
