@@ -78,10 +78,11 @@ class ResourceRequest extends FormRequest
                         return $val;
                     }
 
-                    /** Do not replace array_search with in_array because __toString() will not be called */
-                    return false !== \array_search('required', $exploded, true)
-                    || \in_array('present', $exploded, true)
-                    || false !== \array_search(self::REQUIRED_ON_CREATE, $exploded, true) ?
+                    $explodedStrings = \array_map(fn (mixed $v): string => (string)$v, $exploded);
+
+                    return false !== \in_array('required', $explodedStrings, true)
+                    || \in_array('present', $explodedStrings, true)
+                    || false !== \in_array(self::REQUIRED_ON_CREATE, $explodedStrings, true) ?
                         $exploded :
                         \array_merge(['sometimes'], $exploded);
                 },
@@ -108,9 +109,15 @@ class ResourceRequest extends FormRequest
                         return $val;
                     }
 
+                    $explodedStrings = \array_map(fn (mixed $v): string => (string)$v, $exploded);
+
                     return \array_merge(
                         ['sometimes'],
-                        \array_diff($exploded, [self::REQUIRED_ON_CREATE, 'present', 'required'])
+                        \array_values(\array_diff_key($exploded, \array_flip([
+                            false !== ($k = \array_search(self::REQUIRED_ON_CREATE, $explodedStrings, true)) ? $k : -1,
+                            false !== ($k = \array_search('present', $explodedStrings, true)) ? $k : -2,
+                            false !== ($k = \array_search('required', $explodedStrings, true)) ? $k : -3,
+                        ])))
                     );
                 },
                 $result
