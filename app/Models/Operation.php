@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Attributes\OperationAttributes;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use MacropaySolutions\LaravelCrudWizard\Eloquent\CustomRelations\HasManyThrough2LinkTables;
 use MacropaySolutions\LaravelCrudWizard\Models\BaseModel;
 
 /**
@@ -66,8 +69,23 @@ class Operation extends BaseModel
         return $this->belongsTo(Client::class, 'client_id', 'id');
     }
 
-    public function products(): HasManyThrough
+    public function products(): HasManyThrough | HasManyThrough2LinkTables
     {
+        if ($this->exists && $this->children()->exists()) {
+            return (new HasManyThrough2LinkTables(
+                $this->newRelatedInstance(Product::class)->newQuery(),
+                $this,
+                ($f = (new static()))->setTable($f->getTable() . ' as f'),
+                'f.parent_id',
+                'id',
+                'id',
+                'f.id',
+                ($ff = (new OperationProductPivot()))->setTable($ff->getTable() . ' as ff'),
+                'ff.operation_id',
+                'ff.product_id',
+            ));
+        }
+
         return $this->hasManyThrough(
             Product::class,
             OperationProductPivot::class,
