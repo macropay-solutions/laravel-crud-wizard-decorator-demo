@@ -47,7 +47,7 @@ class ResourceController extends Controller
                     $this->resourceService->incrementBulk($model, $increments, $validatedPayload) :
                     $this->resourceService->update($identifier, $validatedPayload);
 
-                return \response()->json($this->loadRelations($request->replace($all), $baseModel, useWritePdo: true);
+                return \response()->json($this->loadRelations($request->replace($all), $baseModel, useWritePdo: true));
             } catch (ModelNotFoundException $e) {
                 if (!$this->resourceService->isUpdateOrCreateAble($all)) {
                     throw $e;
