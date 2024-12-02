@@ -17,6 +17,19 @@ class ResourceRequest extends FormRequest
 {
     public const REQUIRED_ON_CREATE = 'requiredOnCreate';
 
+    public function __construct(
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+        $content = null,
+        protected ?string $resource = null
+    ) {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      * @throws CrudValidationException
@@ -25,8 +38,12 @@ class ResourceRequest extends FormRequest
     {
         $pathInfo = (array)\explode('/', $this->getPathInfo());
 
-        if ('' === \reset($pathInfo) && 'api' === \next($pathInfo)) {
-            $resource = \next($pathInfo);
+        if (
+            '' === (string)$this->resource
+            && '' === \reset($pathInfo)
+            && 'api' === \next($pathInfo)
+        ) {
+            $this->resource = \next($pathInfo);
         }
 
         $result = ([
@@ -53,21 +70,21 @@ class ResourceRequest extends FormRequest
                 'currency' => 'required|size:3|in:' . \implode(',', Currencies::CURRENCIES),
                 'value' => 'required|numeric|gt:0|regex:/^\d+(\.\d{1,2})?$/',
             ],
-        ][$resource ?? ''] ?? fn (): array => [])();
+        ][$this->resource ?? ''] ?? fn (): array => [])();
 
         if ($this->getRealMethod() === 'POST') {
-            return $this->getValidatorsForCreate($result, $resource ?? '');
+            return $this->getValidatorsForCreate($result);
         }
 
-        return $this->getValidatorsForUpdate($result, $resource ?? '');
+        return $this->getValidatorsForUpdate($result);
     }
 
     /**
      * @throws CrudValidationException
      */
-    private function getValidatorsForCreate(array $result, string $resource): array
+    private function getValidatorsForCreate(array $result): array
     {
-        $forbiddenKeys = $this->getModel($resource)->getIgnoreExternalCreateFor();
+        $forbiddenKeys = $this->getModel()->getIgnoreExternalCreateFor();
 
         return \array_filter(
             \array_map(
@@ -96,9 +113,9 @@ class ResourceRequest extends FormRequest
     /**
      * @throws CrudValidationException
      */
-    private function getValidatorsForUpdate(array $result, string $resource): array
+    private function getValidatorsForUpdate(array $result): array
     {
-        $forbiddenKeys = $this->getModel($resource)->getIgnoreUpdateFor();
+        $forbiddenKeys = $this->getModel()->getIgnoreUpdateFor();
 
         return \array_filter(
             \array_map(
@@ -130,15 +147,15 @@ class ResourceRequest extends FormRequest
     /**
      * @throws CrudValidationException
      */
-    private function getModel(string $resource): BaseModel
+    private function getModel(): BaseModel
     {
-        if ($resource === '') {
+        if ((string)$this->resource === '') {
             throw new CrudValidationException(['resource' => 'Not found']);
         }
 
         foreach (DbCrudMap::MODEL_FQN_TO_CONTROLLER_MAP as $modelFqn => $controllerFqn) {
             /** @var BaseModel $modelFqn */
-            if ($modelFqn::RESOURCE_NAME === $resource) {
+            if ($modelFqn::RESOURCE_NAME === $this->resource) {
                 return \resolve($modelFqn);
             }
         }
