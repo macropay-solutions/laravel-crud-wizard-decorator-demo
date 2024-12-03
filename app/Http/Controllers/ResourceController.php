@@ -40,20 +40,20 @@ class ResourceController extends Controller
                     \array_keys($increments)
                 )));
                 /** $request can contain also files so, overwrite this function to handle them */
-                $request->replace($clone->getDirty());
+                $request->forceReplace($clone->getDirty());
                 $validatedPayload = $this->validateUpdateRequest($request);
 
                 $baseModel = $increments !== [] ?
                     $this->resourceService->incrementBulk($model, $increments, $validatedPayload) :
                     $this->resourceService->update($identifier, $validatedPayload);
 
-                return \response()->json($this->loadRelations($request->replace($all), $baseModel, useWritePdo: true));
+                return \response()->json($this->loadRelations($request->forceReplace($all), $baseModel, useWritePdo: true));
             } catch (ModelNotFoundException $e) {
                 if (!$this->resourceService->isUpdateOrCreateAble($all)) {
                     throw $e;
                 }
 
-                $request->replace($all);
+                $request->forceReplace($all);
                 $request->server->set('REQUEST_METHOD', 'POST');
 
                 return $this->create($request);

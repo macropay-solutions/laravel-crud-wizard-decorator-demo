@@ -49,6 +49,7 @@ class Product extends BaseModel
             new Operation(),
             'id',
             'client_id',
+            $this
         );
     }
 

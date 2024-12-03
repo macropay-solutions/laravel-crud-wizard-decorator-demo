@@ -26,7 +26,8 @@ class Operation extends BaseModel
         'parent',
         'children',
         'client',
-        'products'
+        'products',
+        'productsValueScopeIssue51825'
     ];
     public const BOTH_WAY_RELATIONS_MAP = [
         'parent' => 'children',
@@ -83,6 +84,7 @@ class Operation extends BaseModel
                 ($ff = (new OperationProductPivot()))->setTable($ff->getTable() . ' as ff'),
                 'ff.operation_id',
                 'ff.product_id',
+                $this
             ));
         }
 
@@ -93,6 +95,16 @@ class Operation extends BaseModel
             'id',
             'id',
             'product_id'
+        );
+    }
+
+    public function productsValueScopeIssue51825(): HasManyThrough
+    {
+        return $this->products()->where(
+            fn ($query) => $query->where('value', '>',  10)->when(
+                true,
+                fn($query) => $query->orWhereIn('id', Operation::query()->where('id', 2)->first()->children->pluck('id')->toArray())
+            )
         );
     }
 }

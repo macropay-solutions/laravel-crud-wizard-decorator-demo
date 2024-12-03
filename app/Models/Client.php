@@ -42,6 +42,7 @@ class Client extends BaseModel
             new OperationProductPivot(),
             'operation_id',
             'product_id',
+            $this
         );
     }
 }
