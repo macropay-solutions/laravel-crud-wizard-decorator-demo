@@ -95,7 +95,16 @@ class ResourceRequest extends FormRequest
                         return $val;
                     }
 
-                    $explodedStrings = \array_map(fn (mixed $v): string => (string)$v, $exploded);
+                    $explodedStrings = \array_map(
+                        function (mixed $v): mixed {
+                            try {
+                                return (string)$v;
+                            } catch (\Throwable $e) {
+                                return $v;
+                            }
+                        },
+                        $exploded
+                    );
 
                     return false !== \in_array('required', $explodedStrings, true)
                     || \in_array('present', $explodedStrings, true)
@@ -126,7 +135,16 @@ class ResourceRequest extends FormRequest
                         return $val;
                     }
 
-                    $explodedStrings = \array_map(fn (mixed $v): string => (string)$v, $exploded);
+                    $explodedStrings = \array_map(
+                        function (mixed $v): mixed {
+                            try {
+                                return (string)$v;
+                            } catch (\Throwable $e) {
+                                return $v;
+                            }
+                        },
+                        $exploded
+                    );
 
                     return \array_merge(
                         ['sometimes'],
