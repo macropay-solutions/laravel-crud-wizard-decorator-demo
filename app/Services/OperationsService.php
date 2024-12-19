@@ -13,7 +13,7 @@ class OperationsService extends BaseResourceService
     protected function setBaseModel(): void
     {
         $this->model = new Operation();
-        /*
+        /**
             see dock block of \App\Models\Attributes\OperationAttributes
             see dock block of \App\Models\Operation
 
@@ -31,5 +31,9 @@ class OperationsService extends BaseResourceService
 
             $this->model->a->exists = 0; // sets the model attribute
         */
+        /**
+            For read only DTO of the model or frozen model see \App\Models\Attributes\OperationFrozenAttributes
+            $dto = $this->model->getFrozen(); // se more info in the lib README.md
+         */
     }
 }
