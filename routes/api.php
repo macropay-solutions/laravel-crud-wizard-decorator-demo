@@ -23,6 +23,8 @@ $callback = function (\Illuminate\Routing\Router $router): void {
             Route::get('/' . $resource, [$controller, 'list'])->name('apiinfodecorated.list_' . $resource)->middleware(
                 'decorate-' . $resource . ':list'
             );
+            Route::post('/' . $resource . '/l/i/s/t', [$controller, 'list'])->name('apiinfodecorated.post_list_' .
+                $resource)->middleware('decorate-' . $resource . ':list');
             Route::post('/' . $resource, [$controller, 'create'])->name(
                 'apiinfodecorated.create_' . $resource
             )->middleware('decorate-' . $resource . ':create');
@@ -35,7 +37,10 @@ $callback = function (\Illuminate\Routing\Router $router): void {
             Route::delete('/' . $resource . '/{identifier}', [$controller, 'delete'])->name(
                 'apiinfodecorated.delete_' . $resource
             )->middleware('decorate-' . $resource . ':delete');
-            Route::get('/' . $resource . '/{identifier}/{relation}', [$controller, 'listRelation'])->middleware(
+            Route::match([
+                'post',
+                'get'
+            ], '/' . $resource . '/{identifier}/{relation}', [$controller, 'listRelation'])->middleware(
                 'decorate-' . $resource . ':listRelation'
             );
         }
