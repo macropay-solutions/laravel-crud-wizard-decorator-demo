@@ -73,6 +73,18 @@ class OperationDecorator extends AbstractResourceDecorator
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getRelationMappingsForAggregates(): array
+    {
+        return [
+            'products' => [
+                'value' => 'productValue',
+            ],
+        ];
+    }
+
     private function hasProducts(array $row): bool
     {
         return isset($row['products']);
