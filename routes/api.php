@@ -43,6 +43,18 @@ $callback = function (\Illuminate\Routing\Router $router): void {
             ], '/' . $resource . '/{identifier}/{relation}', [$controller, 'listRelation'])->middleware(
                 'decorate-' . $resource . ':listRelation'
             );
+            Route::get('/' . $resource .
+                '/{identifier}/{relation}/{relatedIdentifier}', [$controller, 'getRelated'])->middleware(
+                'decorate-' . $resource . ':getRelated'
+            );
+            Route::put('/' . $resource .
+                '/{identifier}/{relation}/{relatedIdentifier}', [$controller, 'updateRelated'])->middleware(
+                'decorate-' . $resource . ':updateRelated'
+            );
+            Route::delete('/' . $resource .
+                '/{identifier}/{relation}/{relatedIdentifier}', [$controller, 'deleteRelated'])->middleware(
+                'decorate-' . $resource . ':deleteRelated'
+            );
         }
     } catch (Throwable $e) {
         \Illuminate\Support\Facades\Log::error($e->getMessage());
